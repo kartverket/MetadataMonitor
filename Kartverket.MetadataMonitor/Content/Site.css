@@ -1,0 +1,81 @@
+﻿.form-inline .form-group { margin-bottom: 10px; margin-right: 10px;}
+
+.results { margin-top: 30px;margin-left: 30px;}
+
+.results .colorbox {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.results .description {
+    font-size: 2em;
+    text-align: left;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+.results-ok .colorbox { background-color: #32B25D; }
+.results-ok .description { color: #32B25D; }
+.results-failed .colorbox { background-color: #F38630; }
+.results-failed .description { color: #F38630; }
+.results-unknown .colorbox { background-color: #CCC; }
+.results-unknown .description { color: #CCC; }
+
+.table td.content-align-center { text-align: center; }
+.text-small { font-size: 0.7em; }
+
+table.sortable thead { cursor:pointer; }
+
+
+/* Make chosen select box look more like the rest of bootstrap form elements. */
+.chzn-container-multi .chzn-choices {
+	background-color: #ffffff;
+	border: 1px solid #cccccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+	-moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+	-o-transition: border linear 0.2s, box-shadow linear 0.2s;
+	transition: border linear 0.2s, box-shadow linear 0.2s;
+
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+    height: 38px !important;
+}
+
+.chzn-container-multi .chzn-choices .search-field input {
+    height: 38px;
+}
+
+.chzn-container-multi {
+    width: 500px !important;
+    vertical-align: middle;     
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error {
+    color: #f00;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #f00;
+    background-color: #fee;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: #f00;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+/* validation helpers */

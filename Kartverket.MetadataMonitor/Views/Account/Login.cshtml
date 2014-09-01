@@ -1,0 +1,19 @@
+﻿@model Kartverket.MetadataMonitor.Models.Auth.User
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Logg inn</h2>
+
+
+
+
+<form method="POST" action="@Url.Action("Login", "Account")">
+    @Html.ValidationSummary(false)
+    <label for="username">Brukernavn</label>
+    @Html.TextBoxFor(model => model.Username)
+    <label for="password">Passord</label>
+    @Html.PasswordFor(model => model.Password)
+    <br/>
+    <input type="submit" class="btn" value="Logg inn"/>
+</form>  

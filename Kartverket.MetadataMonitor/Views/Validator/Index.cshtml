@@ -1,0 +1,179 @@
+﻿@model Kartverket.MetadataMonitor.Models.ValidatorResultViewModel
+@{
+    ViewBag.Title = "Valideringsresultater";
+    ViewBag.Description = "Valideringsresultater for metadata fra www.geonorge.no";
+}
+
+
+
+@if (TempData["message"] != null)
+{
+<div class="row">
+    <div class="alert alert-info span6">
+        <p>@TempData["message"]</p>
+    </div>
+</div>
+}
+
+@section PageHeader
+{
+    <form class="form-inline" method="GET" action="@Url.Action("Index")">
+   
+        <div class="form-group">
+            <label for="organization">
+                Organisasjon:
+            </label>
+            @Html.DropDownList("organization", (SelectList)ViewBag.Organizations, "", new { @class = "form-control", style = "width: 300px;" })
+        </div>
+        <div class="form-group">
+            <label for="status">
+                Status:
+            </label>
+            @Html.DropDownList("status", (SelectList)ViewBag.StatusOptions, "", new { @class = "form-control", style = "width:110px" })
+        </div>
+        <br />        
+        <div class="form-group">
+            <label for="resource">
+                Ressurstype:
+            </label>
+            @Html.DropDownList("resource", (SelectList)ViewBag.ResourceTypes, "", new { @class = "form-control", style = "width:110px" })
+        </div>
+        <div class="form-group">
+            <label for="inspire">
+                Tilhørighet:
+            </label>
+            @Html.DropDownList("inspire", (SelectList)ViewBag.InspireOptions, "", new { @class = "form-control", style = "width:150px" })
+        </div>
+
+            <input type="submit" value="Filtrer resultater" class="btn btn-primary" />
+</form>
+    <p class="pull-right">
+        <a href="@Url.Action("Index", "Report", new { organization = Model.Organization, resource = Model.ResourceType, inspire = Model.Inspire})" class="btn btn-default btn-sm" role="button">Gå til rapportvisning</a>
+    </p>
+    <p class="">@Model.MetadataEntries.Count resultater</p>
+}
+
+@if (Model.MetadataEntries.Any())
+{
+    <table class="table table-striped sortable" style="table-layout: fixed">
+        <thead>
+            <tr>
+                <th style="width: 25%">Tittel</th>
+                <th style="width: 15%">Organisasjon</th>
+                <th style="width: 5%">XML</th>
+                <th style="width: 10%">Ressurstype</th>
+                <th style="width: 10%">Type</th>
+                <th style="width: 10%">Status</th>
+                <th style="width: 25%">Feilmeldinger</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var result in Model.MetadataEntries)
+        {
+            var linkText = result.Title;
+            if (linkText == null) { linkText = result.Uuid; }
+            
+            var statusClass = "label-warning";
+            var statusText = "Ikke validert";
+            
+            if (result.IsOk())
+            {
+                statusClass = "label-success";
+                statusText = "OK";    
+            } else if (result.IsFailed())
+            {
+                statusClass = "label-danger";
+                statusText = "FEIL";    
+            }
+            
+            <tr>
+                <td>
+                    <p>
+                        <a href="http://www.geonorge.no/geonetwork/?uuid=@result.Uuid" target="_blank">@linkText</a><br/>
+                        <div class="text-small">@result.Uuid</div>
+                        
+                    </p>
+                </td>
+                <td>
+                    <p>@result.ResponsibleOrganization</p>
+                </td>
+                <td class="content-align-center">
+                    <a href="http://www.geonorge.no/geonetwork/srv/eng/xml_iso19139?uuid=@result.Uuid" target="_blank">
+                        <i class="glyphicon glyphicon-file"></i>
+                    </a>
+                </td>
+                <td>
+                    <div>@result.ResourceType</div>
+                </td>
+                <td>
+                    @if (result.InspireResource)
+                        {
+                            <text>INSPIRE</text>
+                        }
+                        else
+                        {
+                            <text>Norge Digitalt</text>
+                        }
+                </td>
+                <td><span class="label @statusClass">@statusText</span>
+                    <p class="text-small">@result.ValidationResults[0].Timestamp.ToString("dd'.'MM'.'yyyy HH':'mm':'ss")</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <p>
+                            <a href="@Url.Action("RunValidate", new
+                                               {
+                                                   uuid = @result.Uuid,
+                                                   status=@Model.Status,
+                                                   organization=@Model.Organization,
+                                                   resource=@Model.ResourceType,
+                                                   inspire = @Model.Inspire
+                                               })" class="btn btn-default btn-sm" role="button">
+                                <i class="glyphicon glyphicon-play"></i> Validering
+                            </a>
+                        </p>
+                    }
+                </td>
+                <td>
+                    @if (result.ValidationResults[0].Messages != null)
+                    {
+                        <ul>
+                            @foreach (var error in result.ValidationResults[0].Messages.Split('\n'))
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>    
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Ingen resultater.</p>
+}
+
+@section scripts
+{ 
+    <script src="~/Scripts/sorttable.js"></script>
+    <script src="~/Scripts/jquery.placeholder.js"></script>
+}
+
+@section login
+{
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form method="POST" action="@Url.Action("Logout", "Account")" class="navbar-form pull-right">
+            <input type="submit" class="btn" value="Logg ut"/>
+        </form>
+    }
+    else
+    {
+        <form method="POST" action="@Url.Action("Login", "Account")" class="navbar-form pull-right">
+            <input type="text" class="form-control" name="username" placeholder="Brukernavn" style="width: 110px;" />
+            <input type="password" class="form-control" name="password" placeholder="Passord" style="width: 80px;" />
+            <input type="submit" class="btn" value="Logg inn"/>
+        </form>    
+    }
+}

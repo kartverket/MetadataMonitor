@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="no">
+    <head>
+        <meta charset="utf-8">
+        <title>Geonorge - Metadata Monitor</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="@ViewBag.Description">
+        <meta name="author" content="Arkitektum AS for Kartverket">
+        
+        <!-- Styles.Render("~/Content/bootstrap/css/bundle") -->
+        @Styles.Render("~/Content/css")
+        @RenderSection("Head", required: false)
+
+        @Scripts.Render("~/bundles/modernizr")
+        
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="options-wrapper">
+            <div class="container">
+                <p class="top-header">Norges geografiske infrastruktur - Norge Digitalt</p>
+            </div>
+        </div>
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+
+                        <span class="sr-only">Meny</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <span class="navbar-brand"><img class="logo" src="/Content/kartverket_logo.png" width="117" height="39" /></span>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="divider-vertical"></li>
+                        <li><a href="/">Metadatavalidatoren</a></li>
+                    </ul>
+                    
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a target="_blank" href="http://www.geonorge.no">Geonorge forside</a></li>
+                       
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+        <div class="body-content">
+
+            <div class="container">
+                @RenderSection("login", required: false)
+                @RenderSection("PageHeader", required: false)
+
+                <div class="row">
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.PageHeader))
+                    {
+                        <h1>@ViewBag.PageHeader</h1>
+                    }
+                    @RenderBody()
+
+
+                    
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <footer>
+                <h4>Om tjenesten</h4>
+                <p>
+                    Denne metadata-validatoren er et hjelpemiddel for etater som leverer metadata. Den foretar en teknisk kontroll av strukturen og kodene som finnes i de metadata som etatene har levert inn. Den sjekker ikke innholdskvalitet.
+                    Tilbakemeldinger på validatoren kan sendes til <a href="mailto:post@norgedigitalt.no?subject=Tilbakemelding%20Geonorge-metadatavalidator">post@norgedigitalt.no</a>
+                </p>
+
+                <p>Tjenesten validerer hver natt alle geografiske metadata som er publisert på <a href="http://www.geonorge.no">www.geonorge.no</a>. Alle metadata behandles i utgangspunket som en del av <a href="http://159.162.103.4/norgedigitalt.no/Norge_digitalt/Norsk/Inspire/Om_direktivet/">INSPIRE-direktivet</a>. Metadata som er merket med nøkkelordet 'Annet' blir behandlet som <a href="http://159.162.103.4/norgedigitalt.no/Norge_digitalt/Norsk/Metadata/">Norge Digitalt metadata</a>.</p>
+                <p>
+                    <strong>Ressurser:</strong>
+                    <ul>
+                        <li><a href="http://inspire.jrc.ec.europa.eu/documents/Metadata/INSPIRE_MD_IR_and_ISO_v1_2_20100616.pdf">INSPIRE Metadata Implementing Rules</a></li>
+                        <li><a href="http://inspire-geoportal.ec.europa.eu/validator2/">INSPIRE metadata validator</a></li>
+                    </ul>
+                </p>
+                <p class="pull-right text-small">Utviklet av <a href="http://www.arkitektum.no" target="_blank">Arkitektum AS</a></p>
+            </footer>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Content/bootstrap/js/bundle")
+        @Scripts.Render("~/Scripts/Chart.js")
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

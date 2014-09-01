@@ -1,0 +1,144 @@
+﻿@model Kartverket.MetadataMonitor.Models.ReportViewModel
+@{
+    ViewBag.Title = "Metadatarapport";
+}
+
+@section PageHeader
+{
+    <form class="form-inline" method="GET" action="@Url.Action("Index")">
+        <p style="font-weight: bold;">Filtrering av metadata:</p>
+            <div class="form-group">
+            <label for="organization">
+                Organisasjon: 
+            </label>
+            @Html.DropDownList("organization", (SelectList)ViewBag.Organizations, "", new { @class = "form-control", style = "width: 300px;" })
+            </div>
+        <div class="form-group">
+            <label for="resource">
+                Ressurstype:
+            </label>
+            @Html.DropDownList("resource", (SelectList)ViewBag.ResourceTypes, "", new { @class = "form-control", style = "width:110px" })
+        </div>
+        <div class="form-group">
+            <label for="inspire">
+                Tilhørighet:
+            </label>
+            @Html.DropDownList("inspire", (SelectList)ViewBag.InspireOptions, "", new { @class = "form-control", style = "width:150px" })
+        </div>
+            <br />
+            <p><label style="font-weight: bold;" for="fields">Velg felter som skal vises:</label></p>
+            @Html.ListBox("fields", (MultiSelectList)ViewBag.AvailableFields, new { multiple = "multiple", @class = "chzn-select", data_placeholder = "- Velg felter -" })
+            <input type="submit" value="Vis rapport" class="btn btn-primary" />
+</form>
+    
+    <p class="pull-right">
+        <a href="@Url.Action("Index","Validator", new { organization = Model.Organization, resource = Model.ResourceType, inspire = Model.Inspire})" class="btn btn-primary btn-sm" role="button">Vis valideringsresultater</a>
+    </p>
+    <p class="">@Model.MetadataEntries.Count resultater</p>
+}
+
+@if (Model.MetadataEntries.Any())
+{
+    <table class="table table-striped sortable" style="table-layout: fixed">
+        <thead>
+            <tr>
+                <th style="width: 20%">Tittel</th>
+                <th style="width: 20%">Organisasjon</th>
+                @if (Model.Fields != null)
+                {
+                    if (Model.Fields.Contains(1))
+                    {
+                        <th>Kontaktinformasjon</th>    
+                    }
+                    if (Model.Fields.Contains(2))
+                    {
+                        <th>Sammendrag</th>
+                    }
+                    if (Model.Fields.Contains(3))
+                    {
+                        <th>Formål</th>
+                    }
+                    if (Model.Fields.Contains(4))
+                    {
+                        <th>Nøkkelord</th>
+                    }    
+                }
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var result in Model.MetadataEntries)
+        {
+            var linkText = result.Title;
+            if (linkText == null) { linkText = result.Uuid; }
+            
+            <tr>
+                <td>
+                    <p>
+                        <a href="http://www.geonorge.no/geonetwork/?uuid=@result.Uuid" target="_blank">@linkText</a>
+                    </p>
+                </td>
+                <td>
+                    <p>@result.ResponsibleOrganization</p>
+                </td>
+                 @if (Model.Fields != null)
+                 {
+                     if (Model.Fields.Contains(1))
+                     {
+                         <td>
+                            <span style="white-space: pre-line">@result.ContactInformation</span>
+                         </td>
+                     }
+                     if (Model.Fields.Contains(2))
+                     {
+                         <td>@result.Abstract</td>
+                     }
+                     if (Model.Fields.Contains(3))
+                     {
+                         <td>@result.Purpose</td>
+                     }
+                     if (Model.Fields.Contains(4))
+                     {
+                         <td>@result.Keywords</td>
+                     }
+                 }
+
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Ingen resultater.</p>
+}
+
+@section scripts
+{ 
+    <script src="~/Scripts/sorttable.js"></script>
+    <script src="~/Scripts/jquery.placeholder.js"></script>
+    <script src="~/Scripts/chosen.jquery.js"></script>
+    <script>
+        $(function() {
+            /* activate chosen, http://harvesthq.github.com/chosen/ */
+            $(".chzn-select").chosen();
+        });
+    </script>
+}
+
+@section login
+{
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form method="POST" action="@Url.Action("Logout", "Account")" class="navbar-form pull-right">
+            <input type="submit" class="btn" value="Logg ut"/>
+        </form>
+    }
+    else
+    {
+        <form method="POST" action="@Url.Action("Login", "Account")" class="navbar-form pull-right">
+            <input type="text" class="form-control" name="username" placeholder="Brukernavn" style="width: 110px;" />
+            <input type="password" class="form-control" name="password" placeholder="Passord" style="width: 80px;" />
+            <input type="submit" class="btn" value="Logg inn"/>
+        </form>    
+    }
+}

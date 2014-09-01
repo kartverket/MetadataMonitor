@@ -1,0 +1,140 @@
+﻿@model Kartverket.MetadataMonitor.Models.DashboardViewModel
+@{
+    ViewBag.PageHeader = "Validering av metadata fra metadatakatalogen";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <h4>INSPIRE</h4>
+        <div class="pull-left">
+            <canvas id="inspireChart" width="200" height="200"></canvas>
+        </div>
+        <div>
+            <div style="display:table; margin-bottom: 20px">
+                <div style="display: table-cell; text-align: center; vertical-align: middle; width: 30%">
+                    <div class="results results-ok">
+                        <div class="colorbox pull-left"></div>
+                        <div class="description">OK:&nbsp;@Model.TotalInspireOk</div>
+                    </div>
+                    <div class="results results-failed">
+                        <div class="colorbox pull-left"></div>
+                        <div class="description">FEIL:&nbsp;@Model.TotalInspireFailed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <th>INSPIRE</th>
+                <th>OK</th>
+                <th>Feil</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tjeneste</td>
+                    <td>@Model.InspireService.Ok</td>
+                    <td>@Model.InspireService.Failed</td>
+                </tr>
+                <tr>
+                    <td>Datasett</td>
+                    <td>@Model.InspireDataset.Ok</td>
+                    <td>@Model.InspireDataset.Failed</td>
+                </tr>
+                <tr>
+                    <td>Serie</td>
+                    <td>@Model.InspireSeries.Ok</td>
+                    <td>@Model.InspireSeries.Failed</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <h4>Norge Digitalt</h4>
+        <div class="pull-left">
+            <canvas id="norgeDigitaltChart" width="200" height="200"></canvas>
+        </div>
+        <div>
+            <div style="display:table; margin-bottom: 20px">
+                <div style="display: table-cell; text-align: center; vertical-align: middle; width: 30%">
+                    <div class="results results-ok">
+                        <div class="colorbox pull-left"></div>
+                        <div class="description">OK: @Model.TotalNdOk</div>
+                    </div>
+                    <div class="results results-failed">
+                        <div class="colorbox pull-left"></div>
+                        <div class="description">FEIL: @Model.TotalNdFailed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+            <th>Norge Digitalt</th>
+            <th>OK</th>
+            <th>Feil</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tjeneste</td>
+                    <td>@Model.NdService.Ok</td>
+                    <td>@Model.NdService.Failed</td>
+                </tr>
+                <tr>
+                    <td>Datasett</td>
+                    <td>@Model.NdDataset.Ok</td>
+                    <td>@Model.NdDataset.Failed</td>
+                </tr>
+                <tr>
+                    <td>Serie</td>
+                    <td>@Model.NdSeries.Ok</td>
+                    <td>@Model.NdSeries.Failed</td>
+                </tr>
+                <tr>
+                    <td>Applikasjoner</td>
+                    <td>@Model.NdSoftware.Ok</td>
+                    <td>@Model.NdSoftware.Failed</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <p>2014.06.20: Tjenestevalidering fungerer pr. dags dato ikke slik vi ønsker. Ingen av tjenestene blir derfor validert ok for øyeblikket. Det jobbes med å få løst dette problemet.</p>
+</div>
+
+<p>Totalt <b>@Model.TotalResultCount</b> metadata elementer er undersøkt.
+    @if (Model.TotalNotValidated > 0)
+    {
+        <span><b>@Model.TotalNotValidated</b> elementer ble ikke validert pga. ugyldig xml, timeout eller andre feil.</span>
+    }
+</p>
+
+<a href="@Url.Action("Index", "Validator")" class="btn btn-primary">Vis valideringsresultater</a>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var createChart = function(ok, failed, canvas) {
+            console.log("Canvas=" + canvas);
+            var resultStatusData = [
+                {
+                    value: ok,
+                    color: "#32B25D"
+                },
+                {
+                    value: failed,
+                    color: "#F38630"
+                }
+            ];
+            var resultStatusCtx = $("#" + canvas).get(0).getContext("2d");
+            new Chart(resultStatusCtx).Pie(resultStatusData, {});
+        };
+
+        $(function() {
+            createChart(@(Model.TotalInspireOk), @(Model.TotalInspireFailed), "inspireChart");
+        
+            createChart(@(Model.TotalNdOk), @(Model.TotalNdFailed), "norgeDigitaltChart");
+        });
+        
+    </script>
+}

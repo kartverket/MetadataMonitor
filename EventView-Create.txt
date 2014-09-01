@@ -1,0 +1,3 @@
+﻿Run this command in command prompt on server to create event in event viewer. IIS applications has not enough permissions to create the first event, only log events. 
+
+eventcreate /ID 1 /L APPLICATION /T INFORMATION /SO "Metadata monitor" /D "Dummy log message"
